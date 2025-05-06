@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cronometro</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React y ReactDOM CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel para JSX -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    function Cronometro() {
+      const [time, setTime] = useState(0);
+      const [isRunning, setIsRunning] = useState(false);
+      const [laps, setLaps] = useState([]);
+      const intervalRef = useRef(null);
+
+      useEffect(() => {
+        if (isRunning) {
+          intervalRef.current = setInterval(() => {
+            setTime(prev => prev + 1);
+          }, 1000);
+        } else {
+          clearInterval(intervalRef.current);
+        }
+
+        return () => clearInterval(intervalRef.current);
+      }, [isRunning]);
+
+      const toggleRunning = () => {
+        setIsRunning(prev => !prev);
+      };
+
+      const reset = () => {
+        setIsRunning(false);
+        setTime(0);
+        setLaps([]); 
+        clearInterval(intervalRef.current);
+      };
+
+      const saveSession = () => {
+        setLaps(prev => [...prev, time]);
+      };
+
+      const formatTime = (t) => `${t} seg`;
+
+
+      return (
+        <div style={{  textAlign: 'center' }}>
+          <h1>Cronómetro</h1>
+          <h2>{formatTime(time)}</h2>
+          <div >
+            <button onClick={toggleRunning}>
+              {isRunning ? 'Pausar' : 'Iniciar'}
+            </button>
+            <button onClick={reset} >
+              Reiniciar
+            </button>
+            <button onClick={saveSession} >
+              Parcial
+            </button>
+          </div>
+          <h3>Tiempos Guardados:</h3>
+            {laps.map((s, index) => (
+              <li key={index}>Tiempo {index + 1}: {formatTime(s)}</li>
+            ))}  
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<Cronometro />);
+  </script>
+</body>
+</html>
+
