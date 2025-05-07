@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evangelion</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel para JSX -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- JSX Script -->
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    function UserSearch() {
+      const [users, setUsers] = useState([
+        {
+          name: 'Juan Francisco Martínez Leal',
+          description: 'Me gusta cocinar, ver series/películas/anime y pasar tiempo con amigos/familia'
+        },
+        { name: 'Shinji Ikari', description: 'Piloto del EVA 01' },
+        { name: 'Rei Ayanami', description: 'Misteriosa y reservada, piloto del EVA 00' },
+        { name: 'Asuka Langley Soryu', description: 'Impulsiva y confiada, piloto del EVA 02' },
+        { name: 'Misato Katsuragi', description: 'Comandante de operaciones en NERV' },
+        { name: 'Gendo Ikari', description: 'Líder de NERV, frío y calculador, con motivaciones ocultas relacionadas con su hijo y su esposa fallecida.' },
+        { name: 'Ritsuko Akagi', description: 'Científica jefe de NERV, racional y seria, con una historia personal complicada ligada al proyecto EVA.' },
+        { name: 'Kaworu Nagisa', description: 'El quinto niño, misterioso y carismático, posee una conexión directa con los ángeles y con Shinji.' },
+        { name: 'Toji Suzuhara', description: 'Compañero de clase de Shinji, inicialmente hostil pero luego amigo; se convierte temporalmente en piloto del EVA 03.'},
+        { name: 'Kensuke Aida', description: 'Fanático militar y amigo de Shinji, sueña con pilotar un EVA y documenta todo con su cámara.' },
+        { name: 'Maya Ibuki', description: 'Asistente de Ritsuko, nerviosa y leal, participa en el monitoreo técnico de las batallas.' },
+        { name: 'Kaji Ryoji', description: 'Agente triple (trabaja para NERV, SEELE y el gobierno japonés), encantador y misterioso; antiguo amor de Misato.' }
+
+      ]);
+
+      const [filter, setFilter] = useState('');
+      const [newName, setNewName] = useState('');
+      const [newDesc, setNewDesc] = useState('');
+
+      const filteredUsers = useMemo(() => {
+        return users.filter(user =>
+          user.name.includes(filter) || user.description.includes(filter)
+        );
+      }, [filter, users]);
+
+      const addUser = () => {
+        if (newName.trim() && newDesc.trim()) {
+          setUsers([...users, { name: newName, description: newDesc }]);
+          setNewName('');
+          setNewDesc('');
+        }
+      };
+
+      return (
+        <div style={{ fontFamily: 'Arial, sans-serif', padding: '1rem' }}>
+          <h1> Buscador de Personajes</h1>
+
+          <input
+            type="text"
+            placeholder="Buscar por nombre o descripción"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            style={{ width: '300px', padding: '0.5rem', marginBottom: '1rem' }}
+          />
+
+          <h2> Agregar nuevo usuario</h2>
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            style={{ display: 'block', marginBottom: '0.5rem', padding: '0.4rem' }}
+          />
+          <textarea
+            placeholder="Descripción"
+            value={newDesc}
+            onChange={(e) => setNewDesc(e.target.value)}
+            style={{ display: 'block', marginBottom: '0.5rem', padding: '0.4rem', width: '300px', height: '60px' }}
+          />
+          <button onClick={addUser}>Agregar</button>
+
+          <h2> Usuarios encontrados</h2>
+          {filteredUsers.length === 0 ? (
+            <p>No se encontraron usuarios.</p>
+          ) : (
+            <ul>
+              {filteredUsers.map((user, idx) => (
+                <li key={idx} style={{ marginBottom: '1rem' }}>
+                  <strong>{user.name}</strong><br />
+                  <span>{user.description}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<UserSearch />);
+  </script>
+</body>
+</html>
